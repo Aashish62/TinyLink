@@ -1,9 +1,22 @@
 import Link from "../models/Link.js";
 
+const isValidUrl = (u) => {
+  try {
+    new URL(u);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 // POST /api/links
 export const createLink = async (req, res) => {
   try {
     const { url, code } = req.body;
+
+    if (!isValidUrl(url)) {
+      return res.status(400).json({ message: "Invalid URL" });
+    }
 
     const exists = await Link.findOne({ code });
     if (exists) return res.status(409).json({ message: "Code already exists" });
